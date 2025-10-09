@@ -8,6 +8,7 @@ dotenv.config({
 
 
 import connectionDb from "./db/db.js"
+import {userRoute} from "./routes/user.route.js"
 
 
 
@@ -20,6 +21,8 @@ app.use(cors({
 app.use(express.json({limit:"16kb"}))
 app.use(express.urlencoded({extended:true, limit:"16kb"}))
 app.use(express.static("/public"))
+
+app.use("/api/v1/user",userRoute)
 
 connectionDb().then(()=>{
     app.listen(process.env.PORT || 8000,()=>{
