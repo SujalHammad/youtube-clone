@@ -4,6 +4,15 @@ import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
 
+const generateAccessAndRefreshToke=async (userId)=>{
+    const user=User.findById(userId)
+    const accessToken=user.generateAccessToken()
+    const refreshToken=user.generateRefreshToken()
+    user.refreshToken=refreshToken;
+    await user.save({validateBeforeSave:false})
+    return {accessToken,refreshToken};
+}
+
 export const registeUser=asyncHandler(async(req,res)=>{
     const {username,email,password,fullName}=req.body
         if(!username && !email && !password && !fullName){
@@ -16,10 +25,13 @@ export const registeUser=asyncHandler(async(req,res)=>{
             throw new ApiError(400,"Username or email already exist")
         }
         
+        
         const avatarLocalPath=req.files?.avatar[0]?.path;
+       
+        
         let coverImageLocalPath;
         if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length>0){
-            coverImageLocalPath=req.files?.coverImage[0]?.path;
+            coverImageLocalPath=req.files.coverImage[0].path;
         }
 
         if(!avatarLocalPath){
@@ -39,7 +51,7 @@ export const registeUser=asyncHandler(async(req,res)=>{
             fullName,
             password,
             avatar:avatar?.url,
-            coverImage:coverImage?.url || ""
+            coverImage:coverImage?.url || "",
         })
 
         const createdUser=await User.findById(user._id).select("-password -refreshToken")
@@ -53,3 +65,35 @@ export const registeUser=asyncHandler(async(req,res)=>{
     }
 
 )
+
+export const loginUser=asyncHandler(async (req,res)=>{
+    const {username,email,password}=req.body;
+    if(!username && !email && !password){
+        throw new ApiError(400,"all field are required")
+    }
+
+    const user=await User.findOne({
+        $or:[{email},{username}]
+    })
+    if(!user){
+        throw new ApiError(400,"plz enter correct username and email")
+    }
+
+    const isPasswordCorrect=await user.isPasswordCorrect(password)
+    if(!isPasswordCorrect){
+        throw new ApiError(400,"password is wrong")
+    }
+    const {accesToken,refreshToken}=generateAccessAndRefreshToke(existUser._id)
+
+   const loggedInUser=User.findById(user._id).select("-password refreshToken")
+
+    res.status(200).cookie("accessToken",accesToken,{
+        httpOnly:true,
+        secure:true
+    }).cookie("refreshToken",refreshToken,{
+        httpOnly:true,
+        secure:true
+    }).json(
+        new APIRE
+    )
+})
