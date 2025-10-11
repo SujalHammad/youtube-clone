@@ -94,6 +94,36 @@ export const loginUser=asyncHandler(async (req,res)=>{
         httpOnly:true,
         secure:true
     }).json(
-        new APIRE
+        new ApiResponse(
+            200,
+            {
+                user:loggedInUser,
+                accessToken,
+                refreshToken
+            },
+            "User logged in Successfully"
+
+
+        )
+    )
+})
+
+export const logOut=asyncHandler(async (req,res)=>{
+    await User.findByIdAndUpdate(req.user._id,{$set:{refreshToken:undefined}},{new:true})
+    const options={
+        httpOnly:true,
+        secure:true
+    }
+
+    res
+    .status(200)
+    .clearCookie("accessToken",options)
+    .clearCookie("refreshToken",options)
+    .json(
+        new ApiResponse(
+            200,
+            {},
+            "User logged out successfully"
+        )
     )
 })
