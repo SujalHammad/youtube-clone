@@ -18,11 +18,11 @@ app.use(cookieParser())
 
 const { userRoute } = require("./routes/user.route")
 // const {adminRoute}=require("./routes/admin.route.js")
-// const {videoRoute}=require("./routes/video.route.js")
+const {videoRoute}=require("./routes/video.route.js")
 
 app.use("/api/users",userRoute);
 // app.use("/api/admin",adminRoute)
-// app.use("/api/videos",videoRoute)
+app.use("/api/videos",videoRoute)
 
 mongoose.connect(process.env.MONGO_URI).then(()=>{
     console.log(`mongodb connection successfully`)
