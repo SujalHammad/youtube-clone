@@ -1,10 +1,10 @@
-// const express=require("express");
-// const { verifyJwt } = require("../middlewares/auth.middleware");
-// const { getAllUser } = require("../controllers/admin.controller.js");
-// const { isAdmin } = require("../middlewares/checkAdmin.js");
+const express=require("express");
+const { verifyJwt } = require("../middlewares/auth.middleware");
+const { getAllUser } = require("../controllers/admin.controller.js");
+const { isAdmin } = require("../middlewares/checkAdmin.js");
 
-// const adminRoute=express.Router();
+const adminRoute=express.Router();
 
-// adminRoute.get("/getAllUser",verifyJwt,isAdmin,getAllUser)
+adminRoute.get("/getAllUser",verifyJwt,isAdmin,getAllUser)
 
-// module.exports={adminRoute}
+module.exports={adminRoute}
