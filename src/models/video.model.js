@@ -1,15 +1,11 @@
-import mongoose from "mongoose"
+const mongoose=require("mongoose")
 
 const videoSchema=new mongoose.Schema({
     videoFile:{
         type:String,
         required:true
     },
-    owner:{
-        type:mongoose.Schema.Types.ObjectId;
-        ref:"users"
-    },
-    thubnail:{
+    thumbnail:{
         type:String,
         required:true
     },
@@ -24,6 +20,7 @@ const videoSchema=new mongoose.Schema({
     duration:{
         type:Number,
         required:true
+
     },
     views:{
         type:Number,
@@ -31,11 +28,15 @@ const videoSchema=new mongoose.Schema({
     },
     isPublished:{
         type:Boolean,
-        default:true
+        default:false
+    },
+    owner:{
+        required:true,
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"users"
     }
+
 },{timestamps:true})
 
-
 const Video=mongoose.model("Video",videoSchema)
-export  {Video}
-
+module.exports={Video}

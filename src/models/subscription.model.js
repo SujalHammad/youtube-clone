@@ -1,14 +1,15 @@
-import mongoose from "mongoose";
-const subscriptionSchma=new mongoose.Schema({
-    subscriber:{
+const mongoose=require("mongoose")
+
+const subscriptionSchema=new mongoose.Schema({
+    channel:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"users"
     },
-    channel:{
+    subscriber:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"users"
     }
 },{timestamps:true})
 
-const Subscription=mongoose.model("Subcription",subscriptionSchma)
-export {Subscription}
+const Subscription=mongoose.model("Subscription",subscriptionSchema)
+module.exports={Subscription}

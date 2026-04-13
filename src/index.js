@@ -1,37 +1,35 @@
-import express from "express"
-import dotenv from "dotenv"
-import cors from "cors"
-dotenv.config({
-    path:"./.env"
-})
+const express =require("express")
+const mongoose=require("mongoose")
+const dotenv=require("dotenv")
+const cookieParser=require("cookie-parser")
+dotenv.config()
 
-
-
-import connectionDb from "./db/db.js"
-import {userRoute} from "./routes/user.route.js"
 
 
 
 const app=express()
 
-app.use(cors({
-    origin:process.env.CORS_ORIGIN,
-    Credential:true
+app.use(express.json({
+    limit:"16kb"
 }))
-app.use(express.json({limit:"16kb"}))
-app.use(express.urlencoded({extended:true, limit:"16kb"}))
-app.use(express.static("/public"))
 
-app.use("/api/v1/user",userRoute)
+app.use(express.urlencoded({extended:true,limit:"16kb"}))
+app.use(cookieParser())
 
-connectionDb().then(()=>{
+const { userRoute } = require("./routes/user.route")
+// const {adminRoute}=require("./routes/admin.route.js")
+// const {videoRoute}=require("./routes/video.route.js")
+
+app.use("/api/users",userRoute);
+// app.use("/api/admin",adminRoute)
+// app.use("/api/videos",videoRoute)
+
+mongoose.connect(process.env.MONGO_URI).then(()=>{
+    console.log(`mongodb connection successfully`)
     app.listen(process.env.PORT || 8000,()=>{
-        console.log(`server is listening on the port ${process.env.PORT || 800}`)
-    })
+        console.log("app is listing on the port",process.env.PORT ||8000)
+    } )
 }).catch((err)=>{
-    console.error("connection failed",err.message)
+    console.error(err.message);
+    process.exit(1);
 })
-
-
-
-
