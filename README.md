@@ -220,4 +220,4 @@ Protected Request
 **Sujal Hammad**
 
 [![GitHub](https://img.shields.io/badge/GitHub-@SujalHammad-181717?logo=github)](https://github.com/SujalHammad)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-sujalhammad-0A66C2?logo=linkedin)](https://linkedin.com/in/sujalhammad)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-sujalhammad-0A66C2?logo=linkedin)](https://www.linkedin.com/in/sujal-hammad-677221350/)
