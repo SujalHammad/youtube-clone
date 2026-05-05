@@ -1,98 +1,113 @@
-# 📺 YouTube Clone Backend
+# 📺 YouTube Clone — Backend
 
-A scalable and production-ready backend for a YouTube-like video streaming platform. This project is built using Node.js, Express, and MongoDB, focusing on authentication, video management, subscriptions, and secure API design.
+A production-ready REST API for a YouTube-like video streaming platform built with Node.js, Express, and MongoDB.
 
-> ⚡ Role: Backend Developer — Designed APIs, handled authentication, database schema, and server architecture.
-
----
-
-## 🚀 Features
-
-* JWT-based Authentication (Access & Refresh Tokens)
-* User Registration & Login
-* Video Upload & Management
-* Cloudinary Integration for Media Storage
-* Channel Subscription System
-* Like / Dislike Functionality (extendable)
-* Cookie-based Authentication
-* Protected Routes & Middleware
-* Centralized Error Handling
+> 👨‍💻 **Role:** Backend Developer — API design, authentication system, database schema, file upload pipeline, and server architecture.
 
 ---
 
-## 🛠️ Tech Stack
+## ✨ Features
 
-### Backend
-
-* Node.js
-* Express.js
-
-### Database
-
-* MongoDB
-* Mongoose
-
-### Authentication & Security
-
-* JSON Web Token (JWT)
-* bcryptjs
-* cookie-parser
-
-### File Upload & Storage
-
-* Multer
-* Cloudinary
-
-### Tools & Utilities
-
-* dotenv
-* nodemon
-* Prettier
+- JWT Authentication with **Access & Refresh Token** rotation
+- User registration with **avatar & cover image upload** (Cloudinary)
+- **HTTP-only cookie** based token storage
+- Video upload, retrieval, and management
+- Channel **subscription system**
+- **Role-Based Access Control** (user / admin)
+- Centralized error handling with custom `ApiError` & `ApiResponse` classes
+- Async error wrapper (`asyncHandler`) — no try/catch boilerplate in controllers
 
 ---
 
-## 📁 Project Structure
+## 🛠 Tech Stack
+
+| Package | Purpose |
+|---|---|
+| Node.js + Express.js | Server & REST API |
+| MongoDB + Mongoose | Database & ODM |
+| jsonwebtoken | Access & refresh token auth |
+| bcryptjs | Password hashing |
+| cookie-parser | HTTP-only cookie handling |
+| Multer | Local file upload handling |
+| Cloudinary | Cloud media storage |
+| dotenv | Environment config |
+| Prettier | Code formatting |
+
+---
+
+## 🏗 Project Structure
 
 ```
 src/
-│
 ├── controllers/
+│   ├── user.controller.js      # Register, login, profile, token refresh
+│   ├── video.controller.js     # Upload, fetch, delete videos
+│   └── admin.controller.js     # Admin-only user & video management
+│
 ├── models/
+│   ├── user.models.js          # User schema with auth methods
+│   ├── video.model.js          # Video schema
+│   └── subscription.model.js   # Channel subscription schema
+│
 ├── routes/
+│   ├── user.route.js
+│   ├── video.route.js
+│   └── admin.route.js
+│
 ├── middlewares/
+│   ├── auth.middleware.js       # JWT verification
+│   ├── multer.middleware.js     # File upload handling
+│   └── checkAdmin.js           # Admin role guard
+│
 ├── utility/
-├── config/
-└── index.js
+│   ├── ApiError.js             # Custom error class
+│   ├── ApiResponse.js          # Consistent response wrapper
+│   ├── AsyncHandler.js         # Async error handler
+│   └── cloudinary.js           # Cloudinary upload helper
+│
+└── index.js                    # App entry point
 ```
 
 ---
 
-## ⚙️ Installation & Setup
+## 🚀 Getting Started
 
-### 1. Clone Repository
+### Prerequisites
 
-```
-git clone https://github.com/your-username/youtube-clone-backend.git
+- Node.js >= 14
+- MongoDB (local or Atlas)
+- Cloudinary account
+
+### Installation
+
+```bash
+# Clone the repo
+git clone https://github.com/SujalHammad/youtube-clone-backend.git
 cd youtube-clone-backend
-```
 
-### 2. Install Dependencies
-
-```
+# Install dependencies
 npm install
+
+# Configure environment variables
+cp .env.example .env
+# Edit .env with your values
+
+# Start dev server
+npm run dev
 ```
 
-### 3. Setup Environment Variables
+Server runs at: `http://localhost:8080`
 
-Create a `.env` file in the root directory:
+---
 
-```
-MONGO_URI=your_mongodb_connection_string
+## 🔧 Environment Variables
+
+```env
 PORT=8080
+MONGO_URI=your_mongodb_connection_string
 
 ACCESS_TOKEN_SECRET=your_access_token_secret
 ACCESS_TOKEN_EXPIRY=1d
-
 REFRESH_TOKEN_SECRET=your_refresh_token_secret
 REFRESH_TOKEN_EXPIRY=7d
 
@@ -103,95 +118,106 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 ---
 
-## ▶️ Run the Project
-
-```
-npm run dev
-```
-
-Server will run on:
-
-```
-http://localhost:8080
-```
-
----
-
-## 🔑 API Endpoints
+## 📡 API Reference
 
 ### Auth & Users
 
-* POST /api/users/register
-* POST /api/users/login
-* GET /api/users/profile
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/api/users/register` | ✗ | Register with avatar upload |
+| `POST` | `/api/users/login` | ✗ | Login, receive tokens in cookies |
+| `GET` | `/api/users/profile` | ✓ | Get logged-in user profile |
 
 ### Videos
 
-* POST /api/videos
-* GET /api/videos
-* GET /api/videos/:id
-* DELETE /api/videos/:id
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/api/videos` | ✓ | Upload video to Cloudinary |
+| `GET` | `/api/videos` | ✓ | Get all videos |
+| `GET` | `/api/videos/:id` | ✓ | Get single video |
+| `DELETE` | `/api/videos/:id` | ✓ | Delete video |
 
 ### Subscriptions
 
-* Subscribe / Unsubscribe channels
-* Get user subscriptions
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/api/users/subscribe/:channelId` | ✓ | Subscribe to a channel |
+| `DELETE` | `/api/users/subscribe/:channelId` | ✓ | Unsubscribe |
+| `GET` | `/api/users/subscriptions` | ✓ | Get user subscriptions |
 
 ### Admin
 
-* Manage users and videos (admin routes)
-
----
-
-## 🧠 Key Backend Concepts
-
-* RESTful API Design
-* MVC Architecture
-* Middleware-based request handling
-* Async Error Handling
-* Role-Based Access Control (RBAC)
-* File Upload Handling
-* Token-based Authentication
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/api/admin/users` | Admin | List all users |
+| `DELETE` | `/api/admin/videos/:id` | Admin | Remove any video |
 
 ---
 
 ## ☁️ File Upload Flow
 
-1. User uploads video via API
-2. Multer processes the file
-3. File uploaded to Cloudinary
-4. URL stored in MongoDB
-5. Response sent to client
+```
+User Request → Multer (temp local storage)
+             → Cloudinary upload
+             → URL saved in MongoDB
+             → Response returned to client
+```
 
 ---
 
-## 🛡️ Security Features
+## 🗄 Database Schema
 
-* Password hashing using bcrypt
-* JWT Authentication
-* HTTP-only cookies
-* Protected routes middleware
-* Centralized error handling
+```js
+// User
+{ username, email, fullName, password (hashed), avatar, coverImage,
+  refreshToken, watchHistory [], role (user/admin), timestamps }
 
----
+// Video
+{ title, description, videoFile, thumbnail, owner (ref: User),
+  duration, views, isPublished, timestamps }
 
-## 📌 Future Improvements
-
-* Comment System
-* Search & Recommendation System
-* Real-time Notifications
-* Analytics Dashboard
-* Advanced Like/Dislike System
+// Subscription
+{ subscriber (ref: User), channel (ref: User), timestamps }
+```
 
 ---
 
-## 👨‍💻 Author
+## 🔐 Auth Flow
 
-Sujal Hammad
-Backend Developer
+```
+Register / Login
+  → bcrypt hash password
+  → generate accessToken (1d) + refreshToken (7d)
+  → store refreshToken in DB
+  → send both via HTTP-only cookies
+
+Protected Request
+  → auth.middleware verifies accessToken
+  → if expired → use refreshToken to rotate tokens
+  → proceed to controller
+```
 
 ---
 
-## ⭐ Contribution
+## 🗺 Roadmap
 
-Feel free to fork this repository and submit pull requests.
+- [x] JWT auth with access & refresh token rotation
+- [x] Avatar & cover image upload via Cloudinary
+- [x] Video CRUD
+- [x] Subscription system
+- [x] Role-based access control (admin)
+- [x] Centralized error handling
+- [ ] Comment system
+- [ ] Like / Dislike system
+- [ ] Search & recommendations
+- [ ] Real-time notifications
+- [ ] Analytics dashboard
+
+---
+
+## 👤 Author
+
+**Sujal Hammad**
+
+[![GitHub](https://img.shields.io/badge/GitHub-@SujalHammad-181717?logo=github)](https://github.com/SujalHammad)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-sujalhammad-0A66C2?logo=linkedin)](https://linkedin.com/in/sujalhammad)
